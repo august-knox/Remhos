@@ -64,6 +64,16 @@ TEST_MK = $(MFEM_DIR)/config/test.mk
 MFEM_DIR1 := $(MFEM_DIR)
 MFEM_DIR2 := $(realpath $(MFEM_DIR))
 
+# Caliper/Adiak flags
+
+CALIPER_DIR = $(spack location --install-dir caliper)
+ADIAK_DIR = $(spack location --install-dir adiak)
+CALIPER_FLAGS = -I${CALIPER_DIR}/include -DUSE_CALIPER
+ADIAK_INCLUDE = -I${ADIAK_DIR}/include 
+ADIAK_LDFLAGS =  -L${ADIAK_DIR}/lib -ladiak
+CALIPER_LDFLAGS =  -L${CALIPER_DIR}/lib64 -lcaliper 
+
+
 # Use the compiler used by MFEM. Get the compiler and the options for compiling
 # and linking from MFEM's config.mk. (Skip this if the target does not require
 # building.)
@@ -73,7 +83,7 @@ ifeq (,$(filter help clean distclean style,$(MAKECMDGOALS)))
 endif
 
 CXX = $(MFEM_CXX)
-CPPFLAGS = $(MFEM_CPPFLAGS)
+CPPFLAGS = $(MFEM_CPPFLAGS) $(CALIPER_FLAGS) $(ADIAK_FLAGS)
 CXXFLAGS = $(MFEM_CXXFLAGS)
 
 # MFEM config does not define C compiler
@@ -81,7 +91,8 @@ CC     = gcc
 CFLAGS = -O3
 
 # Optional link flags
-LDFLAGS =
+LDFLAGS = $(CALIPER_LDFLAGS) $(ADIAK_LDFLAGS)
+
 
 OPTIM_OPTS = -O3
 DEBUG_OPTS = -g -Wall -std=c++11

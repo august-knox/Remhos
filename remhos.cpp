@@ -39,6 +39,13 @@
 #include "remhos_tools.hpp"
 #include "remhos_sync.hpp"
 
+#ifdef USE_CALIPER
+#include <caliper/cali.h>
+#include <caliper/cali-manager.h>
+#ifdef HAVE_MPI
+#include <caliper/cali-mpi.h>
+#endif
+
 using namespace std;
 using namespace mfem;
 
@@ -144,6 +151,19 @@ int main(int argc, char *argv[])
    // Initialize MPI.
    mfem::MPI_Session mpi(argc, argv);
    const int myid = mpi.WorldRank();
+
+#ifdef USE_CALIPER
+    setupCaliper();
+
+    cali::ConfigManager calimgr(params.simulationParams.caliperConfig.c_str());
+    if (calimgr.error())
+        std::cerr << "caliper config error: " << calimgr.error_msg() << std::endl;
+    calimgr.start();
+    adiak::init(nullptr);
+    adiak::cmdline();
+    adiak::hostname();
+    
+#endif
 
    const char *mesh_file = "data/periodic-square.mesh";
    int rs_levels = 2;
@@ -368,14 +388,24 @@ int main(int argc, char *argv[])
       v.ProjectCoefficient(vcoeff);
 
       double t = 0.0;
+#ifdef USE_CALIPER
+      CALI_CXX_MARK_LOOP_BEGIN(mainloop, "rem.mainloop");
+#endif
       while (t < t_final)
       {
+#ifdef USE_CALIPER
+         CALI_CXX_MARK_LOOP_ITERATION(mainloop, t);
+#endif
          t += dt;
          // Move the mesh nodes.
          x.Add(std::min(dt, t_final-t), v);
          // Update the node velocities.
          v.ProjectCoefficient(vcoeff);
       }
+#ifdef USE_CALIPER
+      CALI_CXX_MARK_LOOP_END(mainloop);
+#endif
+
 
       // Pseudotime velocity.
       add(x, -1.0, x0, v_gf);
@@ -1246,7 +1276,9 @@ int main(int argc, char *argv[])
       delete lom.SubFes1;
       delete lom.VolumeTerms;
    }
-
+#ifdef USE_CALIPER
+   calimgr.flush();
+#endif
    return 0;
 }
 
@@ -1925,3 +1957,19 @@ double inflow_function(const Vector &x)
    }
    else { return 0.0; }
 }
+
+void setupCaliper()
+{
+#ifdef USE_CALIPER
+#ifdef HAVE_MPI
+   cali_mpi_init();
+#endif
+
+   cali_config_preset("CALI_LOG_VERBOSITY", "0");
+   cali_config_preset("CALI_CALIPER_ATTRIBUTE_DEFAULT_SCOPE", "process");
+
+   cali_set_global_string_byname("rem.git_vers", GIT_VERS);
+   cali_set_global_string_byname("rem.git_hash", GIT_HASH);
+#endif
+}
+
