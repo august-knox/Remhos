@@ -102,7 +102,8 @@ ifeq ($(REMHOS_DEBUG),YES)
 endif
 
 LIBS = $(strip $(REMHOS_LIBS) $(LDFLAGS))
-CCC  = $(strip $(CXX) $(REMHOS_FLAGS))
+EXTRA_INC_DIR = $(or $(wildcard $(MFEM_DIR)/include/mfem),$(MFEM_DIR))
+CCC  = $(strip $(CXX) $(REMHOS_FLAGS) $(if $(EXTRA_INC_DIR),-I$(EXTRA_INC_DIR)))
 Ccc  = $(strip $(CC) $(CFLAGS) $(GL_OPTS))
 
 SOURCE_FILES = remhos.cpp remhos_tools.cpp remhos_lo.cpp remhos_ho.cpp \
