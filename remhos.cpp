@@ -155,15 +155,15 @@ int main(int argc, char *argv[])
    const int myid = mpi.WorldRank();
 
 #ifdef USE_CALIPER
-    setupCaliper();
+   setupCaliper();
 
-    cali::ConfigManager calimgr(params.simulationParams.caliperConfig.c_str());
-    if (calimgr.error())
-        std::cerr << "caliper config error: " << calimgr.error_msg() << std::endl;
-    calimgr.start();
-    adiak::init(nullptr);
-    adiak::cmdline();
-    adiak::hostname();
+   cali::ConfigManager calimgr(params.simulationParams.caliperConfig.c_str());
+   if (calimgr.error())
+       std::cerr << "caliper config error: " << calimgr.error_msg() << std::endl;
+   calimgr.start();
+   adiak::init(nullptr);
+   adiak::cmdline();
+   adiak::hostname();
     
 #endif
 
@@ -1970,8 +1970,8 @@ void setupCaliper()
    cali_config_preset("CALI_LOG_VERBOSITY", "0");
    cali_config_preset("CALI_CALIPER_ATTRIBUTE_DEFAULT_SCOPE", "process");
 
-   cali_set_global_string_byname("rem.git_vers", GIT_VERS);
-   cali_set_global_string_byname("rem.git_hash", GIT_HASH);
+   //cali_set_global_string_byname("rem.git_vers", GIT_VERS);
+   //cali_set_global_string_byname("rem.git_hash", GIT_HASH);
 #endif
 }
 
