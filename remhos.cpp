@@ -272,7 +272,7 @@ int main(int argc, char *argv[])
 #ifdef USE_CALIPER
    setupCaliper();
 
-   cali::ConfigManager calimgr(params.Parse().caliperConfig.c_str());
+   cali::ConfigManager calimgr;
    if (calimgr.error())
        std::cerr << "caliper config error: " << calimgr.error_msg() << std::endl;
    calimgr.start();
