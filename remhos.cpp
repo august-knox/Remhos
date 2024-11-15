@@ -157,19 +157,6 @@ int main(int argc, char *argv[])
    mfem::MPI_Session mpi(argc, argv);
    const int myid = mpi.WorldRank();
 
-#ifdef USE_CALIPER
-   setupCaliper();
-
-   cali::ConfigManager calimgr(params.simulationParams.caliperConfig.c_str());
-   if (calimgr.error())
-       std::cerr << "caliper config error: " << calimgr.error_msg() << std::endl;
-   calimgr.start();
-   adiak::init(nullptr);
-   adiak::cmdline();
-   adiak::hostname();
-    
-#endif
-
    const char *mesh_file = "data/periodic-square.mesh";
    int rs_levels = 2;
    int rp_levels = 0;
@@ -280,6 +267,20 @@ int main(int argc, char *argv[])
       return 1;
    }
    if (myid == 0) { args.PrintOptions(cout); }
+
+//setup caliper config manager
+#ifdef USE_CALIPER
+   setupCaliper();
+
+   cali::ConfigManager calimgr(params.Parse().caliperConfig.c_str());
+   if (calimgr.error())
+       std::cerr << "caliper config error: " << calimgr.error_msg() << std::endl;
+   calimgr.start();
+   adiak::init(nullptr);
+   adiak::cmdline();
+   adiak::hostname();
+    
+#endif
 
    // Enable hardware devices such as GPUs, and programming models such as
    // CUDA, OCCA, RAJA and OpenMP based on command line options.
