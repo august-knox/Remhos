@@ -81,6 +81,9 @@ double inflow_function(const Vector &x);
 // Mesh bounding box
 Vector bb_min, bb_max;
 
+//Caliper setup
+void setupCaliper();
+
 class AdvectionOperator : public TimeDependentOperator
 {
 private:
