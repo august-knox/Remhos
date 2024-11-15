@@ -42,8 +42,10 @@
 #ifdef USE_CALIPER
 #include <caliper/cali.h>
 #include <caliper/cali-manager.h>
+#include <adiak.hpp>
 #ifdef HAVE_MPI
 #include <caliper/cali-mpi.h>
+#endif
 #endif
 
 using namespace std;
