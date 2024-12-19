@@ -180,7 +180,7 @@ void SmoothnessIndicator::ComputeSmoothnessIndicator(const Vector &u,
    }
 }
 
-void SmoothnessIndicator::UpdateBounds(int dof_id, double u_HO,
+__host__ __device__ void SmoothnessIndicator::UpdateBounds(int dof_id, double u_HO,
                                        const ParGridFunction &si_vals,
                                        double &u_min, double &u_max)
 {
