@@ -42,7 +42,7 @@
 #ifdef USE_CALIPER
 #include <caliper/cali.h>
 #include <caliper/cali-manager.h>
-//#include <adiak.hpp>
+#include <adiak.hpp>
 #ifdef HAVE_MPI
 #include <caliper/cali-mpi.h>
 #endif
@@ -297,9 +297,9 @@ MFEM_EXPORT int remhos(int argc, char *argv[], double &final_mass_u)
    if (calimgr.error())
        std::cerr << "caliper config error: " << calimgr.error_msg() << std::endl;
    calimgr.start();
-   adiak::init(nullptr);
-   adiak::cmdline();
-   adiak::hostname();
+   //adiak::init(nullptr);
+   //adiak::cmdline();
+   //adiak::hostname();
     
 #endif
 
