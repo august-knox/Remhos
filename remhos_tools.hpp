@@ -90,7 +90,7 @@ public:
    ~SmoothnessIndicator();
 
    void ComputeSmoothnessIndicator(const Vector &u, ParGridFunction &si_vals_u);
-   __host__ __device__ void UpdateBounds(int dof_id, double u_HO,
+   void UpdateBounds(int dof_id, double u_HO,
                      const ParGridFunction &si_vals,
                      double &u_min, double &u_max);
 
