@@ -51,6 +51,8 @@
 using namespace std;
 using namespace mfem;
 
+#define REMHOS_GPU_SETUP
+
 enum class HOSolverType {None, Neumann, CG, LocalInverse};
 enum class FCTSolverType {None, FluxBased, ClipScale,
                           NonlinearPenalty, FCTProject
@@ -289,6 +291,7 @@ MFEM_EXPORT int remhos(int argc, char *argv[], double &final_mass_u)
    }
    if (myid == 0) { args.PrintOptions(cout); }
 
+<<<<<<< HEAD
 //setup caliper config manager
 #ifdef USE_CALIPER
    setupCaliper();
@@ -301,6 +304,12 @@ MFEM_EXPORT int remhos(int argc, char *argv[], double &final_mass_u)
    //adiak::cmdline();
    //adiak::hostname();
     
+=======
+#ifdef REMHOS_GPU_SETUP
+   MFEM_VERIFY(ho_type  == HOSolverType::LocalInverse &&
+               lo_type  == LOSolverType::MassBased &&
+               fct_type == FCTSolverType::ClipScale, "Wrong GPU setup.");
+>>>>>>> f102edb64e5f4ddaf8898da28e9e275fe57cdf5d
 #endif
 
    // Enable hardware devices such as GPUs, and programming models such as
@@ -1402,12 +1411,19 @@ void AdvectionOperator::Mult(const Vector &X, Vector &Y) const
       // Reset precomputed geometric data.
       Mbf.FESpace()->GetMesh()->DeleteGeometricFactors();
 
+#ifndef REMHOS_GPU_SETUP
       // Reassemble on the new mesh. Element contributions.
       // Currently needed to have the sparse matrices used by the LO methods.
       Mbf.BilinearForm::operator=(0.0);
       Mbf.Assemble();
       Kbf.BilinearForm::operator=(0.0);
       Kbf.Assemble(0);
+#endif
+
+      timer.sw_L2inv.Start();
+      M_HO.BilinearForm::operator=(0.0);
+      M_HO.Assemble();
+      timer.sw_L2inv.Stop();
 
       if (Mbf.GetAssemblyLevel() != AssemblyLevel::PARTIAL)
       {
@@ -1416,12 +1432,7 @@ void AdvectionOperator::Mult(const Vector &X, Vector &Y) const
          lumpedM.HostReadWrite();
          ml.SpMat().GetDiag(lumpedM);
       }
-      else { Mbf.Mult(ones, lumpedM); }
-
-      timer.sw_L2inv.Start();
-      M_HO.BilinearForm::operator=(0.0);
-      M_HO.Assemble();
-      timer.sw_L2inv.Stop();
+      else { M_HO.Mult(ones, lumpedM); }
 
       timer.sw_rhs.Start();
       K_HO.BilinearForm::operator=(0.0);
@@ -1434,6 +1445,7 @@ void AdvectionOperator::Mult(const Vector &X, Vector &Y) const
          lom.pk->Assemble();
       }
 
+#ifndef REMHOS_GPU_SETUP
       // Face contributions.
       asmbl.bdrInt = 0.;
       Mesh *mesh = M_HO.FESpace()->GetMesh();
@@ -1463,6 +1475,7 @@ void AdvectionOperator::Mult(const Vector &X, Vector &Y) const
             }
          }
       }
+#endif
    }
 
    const int size = Kbf.ParFESpace()->GetVSize();
