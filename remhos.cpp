@@ -291,7 +291,6 @@ MFEM_EXPORT int remhos(int argc, char *argv[], double &final_mass_u)
    }
    if (myid == 0) { args.PrintOptions(cout); }
 
-<<<<<<< HEAD
 //setup caliper config manager
 #ifdef USE_CALIPER
    setupCaliper();
@@ -303,13 +302,12 @@ MFEM_EXPORT int remhos(int argc, char *argv[], double &final_mass_u)
    //adiak::init(nullptr);
    //adiak::cmdline();
    //adiak::hostname();
+#endif
     
-=======
 #ifdef REMHOS_GPU_SETUP
    MFEM_VERIFY(ho_type  == HOSolverType::LocalInverse &&
                lo_type  == LOSolverType::MassBased &&
                fct_type == FCTSolverType::ClipScale, "Wrong GPU setup.");
->>>>>>> f102edb64e5f4ddaf8898da28e9e275fe57cdf5d
 #endif
 
    // Enable hardware devices such as GPUs, and programming models such as
