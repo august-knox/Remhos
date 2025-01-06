@@ -66,12 +66,14 @@ MFEM_DIR2 := $(realpath $(MFEM_DIR))
 
 # Caliper/Adiak flags
 
-CALIPER_DIR = $(spack location --install-dir caliper)
+#CALIPER_DIR = $(spack location --install-dir caliper)
 #ADIAK_DIR = $(spack location --install-dir adiak)
+ifeq ($(CALIPER_DIR),)
 CALIPER_FLAGS = -I${CALIPER_DIR}/include -DUSE_CALIPER
 ADIAK_INCLUDE = -I${ADIAK_DIR}/include 
 ADIAK_LDFLAGS =  -L${ADIAK_DIR}/lib -ladiak
 CALIPER_LDFLAGS =  -L${CALIPER_DIR}/lib64 -lcaliper 
+endif
 
 
 # Use the compiler used by MFEM. Get the compiler and the options for compiling
