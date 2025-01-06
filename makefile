@@ -68,7 +68,7 @@ MFEM_DIR2 := $(realpath $(MFEM_DIR))
 
 #CALIPER_DIR = $(spack location --install-dir caliper)
 #ADIAK_DIR = $(spack location --install-dir adiak)
-ifeq ($(CALIPER_DIR),)
+ifdef CALIPER_DIR
 CALIPER_FLAGS = -I${CALIPER_DIR}/include -DUSE_CALIPER
 ADIAK_INCLUDE = -I${ADIAK_DIR}/include 
 ADIAK_LDFLAGS =  -L${ADIAK_DIR}/lib -ladiak
