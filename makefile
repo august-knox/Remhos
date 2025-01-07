@@ -64,11 +64,11 @@ TEST_MK = $(MFEM_DIR)/config/test.mk
 MFEM_DIR1 := $(MFEM_DIR)
 MFEM_DIR2 := $(realpath $(MFEM_DIR))
 
-# Caliper/Adiak flags
+# Use Caliper annotations
 
-#CALIPER_DIR = $(spack location --install-dir caliper)
-#ADIAK_DIR = $(spack location --install-dir adiak)
-ifdef CALIPER_DIR
+ifdef -DUSE_CALIPER
+CALIPER_DIR = $(spack location --install-dir caliper)
+ADIAK_DIR = $(spack location --install-dir adiak)
 CALIPER_FLAGS = -I${CALIPER_DIR}/include -DUSE_CALIPER
 ADIAK_INCLUDE = -I${ADIAK_DIR}/include 
 ADIAK_LDFLAGS =  -L${ADIAK_DIR}/lib -ladiak
