@@ -66,7 +66,7 @@ MFEM_DIR2 := $(realpath $(MFEM_DIR))
 
 # Use Caliper annotations
 
-ifdef -DUSE_CALIPER
+ifdef USE_CALIPER
 CALIPER_DIR = $(spack location --install-dir caliper)
 ADIAK_DIR = $(spack location --install-dir adiak)
 CALIPER_FLAGS = -I${CALIPER_DIR}/include -DUSE_CALIPER
