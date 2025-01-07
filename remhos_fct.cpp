@@ -499,7 +499,7 @@ void ClipScaleSolver::CalcFCTSolution(const ParGridFunction &u, const Vector &m,
       smth_indicator->ComputeSmoothnessIndicator(u, si_val);
    }
 
-   const auto N4t = dt;
+   const auto δt = dt;
 
    const auto U = mfem::Reshape(u.Read(), NE*nd);
    const auto M = mfem::Reshape(m.Read(), NE*nd);
@@ -524,7 +524,7 @@ void ClipScaleSolver::CalcFCTSolution(const ParGridFunction &u, const Vector &m,
       {
          const int dof_id = k*nd+j;
 
-         const auto u_new_lo = U(dof_id) + N4t * DU_LO(dof_id);
+         const auto u_new_lo = U(dof_id) + δt * DU_LO(dof_id);
 
          auto umin = U_MIN(dof_id);
          auto umax = U_MAX(dof_id);
@@ -532,13 +532,13 @@ void ClipScaleSolver::CalcFCTSolution(const ParGridFunction &u, const Vector &m,
 #if !defined(MFEM_USE_CUDA) && !defined(MFEM_USE_HIP)
          if (update_bounds)
          {
-            const auto u_new_ho   = U(dof_id) + N4t * DU_HO(dof_id);
+            const auto u_new_ho   = U(dof_id) + δt * DU_HO(dof_id);
             smth_indicator->UpdateBounds(dof_id, u_new_ho, si_val, umin, umax);
          }
 #endif
 
-         const auto f_clip_min = M(dof_id) / N4t * (umin - u_new_lo);
-         const auto f_clip_max = M(dof_id) / N4t * (umax - u_new_lo);
+         const auto f_clip_min = M(dof_id) / δt * (umin - u_new_lo);
+         const auto f_clip_max = M(dof_id) / δt * (umax - u_new_lo);
 
          F_CLIP(k,j) = M(dof_id) * (DU_HO(dof_id) - DU_LO(dof_id));
          F_CLIP(k,j) = fmin(f_clip_max, fmax(f_clip_min, F_CLIP(k,j)));
